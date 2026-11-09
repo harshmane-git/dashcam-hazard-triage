@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# ML datasets and generated data
+data/raw/
+data/processed/
+data/interim/
+
+# Model weights and checkpoints
+*.pt
+*.pth
+*.onnx
+*.h5
+*.keras
+
+# Generated outputs
+outputs/
+runs/
+wandb/
+
+# OS files
+.DS_Store
+
+# Dataset files
+data/
+
+# Model weights
+*.pt
+*.pth
+*.onnx
+
+# Experiment outputs
+outputs/
+runs/
+
+# Python cache
+__pycache__/
+*.pyc

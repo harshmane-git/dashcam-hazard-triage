@@ -1,3 +1,4 @@
+
 # Python
 __pycache__/
 *.py[cod]
@@ -16,11 +17,6 @@ env/
 .env
 .env.*
 
-# ML datasets and generated data
-data/raw/
-data/processed/
-data/interim/
-
 # Model weights and checkpoints
 *.pt
 *.pth
@@ -28,26 +24,26 @@ data/interim/
 *.h5
 *.keras
 
-# Generated outputs
+# Generated experiment outputs
 outputs/
+outputs_nexar/
 runs/
 wandb/
 
+# Research repository
+research/
+
+# Dataset: ignore everything except reproducibility split files
+data/*
+!data/nexar-collision-prediction/
+
+data/nexar-collision-prediction/*
+!data/nexar-collision-prediction/splits/
+
+data/nexar-collision-prediction/splits/*
+!data/nexar-collision-prediction/splits/dev.csv
+!data/nexar-collision-prediction/splits/heldout.csv
+!data/nexar-collision-prediction/splits/split_manifest.json
+
 # OS files
 .DS_Store
-
-# Dataset files
-data/
-
-# Model weights
-*.pt
-*.pth
-*.onnx
-
-# Experiment outputs
-outputs/
-runs/
-
-# Python cache
-__pycache__/
-*.pyc

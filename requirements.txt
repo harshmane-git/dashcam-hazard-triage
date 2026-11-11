@@ -1,0 +1,12 @@
+
+# Core computer vision and tracking
+ultralytics==8.4.210
+opencv-python==5.0.0.93
+
+# Data processing
+numpy==2.5.4
+pandas==3.1.1
+PyYAML==6.0.3
+
+# Future machine-learning experiments
+scikit-learn==1.9.1

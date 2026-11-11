@@ -1,0 +1,73 @@
+# Phase 1 + Phase 2 config. Phase 3 adds clip length and classifier rules.
+model: yolo26n.pt        # fallback: yolo11n.pt
+device: 0                # GPU index, or "cpu"
+imgsz: 640
+conf: 0.30
+tracker: bytetrack.yaml
+classes:                 # COCO ids kept; everything else is ignored
+  person: 0
+  bicycle: 1
+  car: 2
+  bus: 5
+  truck: 7
+
+# ---------------- Phase 2 ----------------
+roi:
+  mode: auto               # auto = calibrate horizon + vanishing point per video, perspective lane
+                           # static = fixed trapezoid (the 4 keys marked * below)
+  # --- auto mode ---
+  u_lane: 1.1              # lane half-width in camera-heights (~3.2 m lane / ~1.45 m camera height)
+  lane_offset_u: 0.0       # shift the lane centre if the camera is mounted off-centre (+ = right)
+  u_window_s: 1.0          # window for the lateral-drift (collision-course) estimate
+  pred_cap_s: 2.5          # never extrapolate lateral position further than this
+  force_horizon_y: null    # manual override (fraction of frame height), e.g. 0.45 if the cyan
+  force_center_x: null     # horizon line / lane looks wrong on a clip; same for the vanishing column
+  calibration:
+    min_conf: 0.4
+    min_points: 150        # vehicle detections needed to fit the horizon
+    min_track_frames: 25   # per-track length needed to vote for the vanishing point
+    min_size_ratio: 1.4    # track must grow/shrink at least this much to be informative
+    min_tracks: 3          # tracks needed before trusting the fitted vanishing point
+    class_height_m: {car: 1.5, truck: 3.2, bus: 3.2}
+  # --- used by static mode, and as fallback when auto calibration has too little data ---
+  center_x: 0.50           # *
+  horizon_y: 0.50          # *
+  top_half_width: 0.06     # *
+  bottom_half_width: 0.28  # *
+  bottom_y: 0.95           # lower edge of the zone (also used for drawing)
+
+edge_margin_px: 4          # boxes touching the frame border are clipped: no TTC, not "in lane"
+min_track_len: 8           # ignore tracks younger than this many frames
+roi_persist_frames: 5      # must stay in the zone this many consecutive frames
+persist_s: 0.3             # risk must hold this long in consecutive frames before firing
+gap_reset_s: 1.0           # a track missing longer than this restarts its window
+cooldown_s: 3.0            # triggers closer together than this merge into one incident
+
+fcw:                       # forward collision warning (vehicles)
+  vehicle_classes: [car, bus, truck]
+  window_s: 0.6            # regression window for box-height growth
+  min_samples: 5
+  slope_k: 1.5             # trigger on TTC computed with growth slope minus k standard errors
+  min_h_frac: 0.06         # ignore vehicles whose box is shorter than 6% of frame height
+  ttc_thresh_s: 2.5
+
+pedestrian:                # pedestrian / cyclist proximity
+  classes: [person, bicycle]
+  roi_widen: 1.6           # wider lane for VRUs (they step in from the sides)
+  prox_h_frac: 0.25        # box height / frame height above which they are "too close"
+  min_h_frac: 0.08
+  ttc_thresh_s: 2.0
+
+# ---------------- Phase 3 ----------------
+clip:
+  pre_s: 5.0               # seconds saved before the incident starts
+  post_s: 3.0              # seconds saved after it ends
+  max_width: 1920          # archive clips wider than this are downscaled
+
+classifier:
+  type: rules              # "rules" now; Phase 5 plugs a trained model in here
+  vru_escalate: true       # pedestrian / cyclist incidents are bumped up one level
+  # Placeholder thresholds: tune them on the gold set. Either condition is enough.
+  high:   {max_ttc_s: 1.0, min_h_frac: 0.45}
+  medium: {max_ttc_s: 1.8, min_duration_s: 1.0}
+  # Actions are cumulative:  Low = archive | Medium = + notify | High = + flag for report

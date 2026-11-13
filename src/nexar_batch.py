@@ -32,6 +32,8 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger("nexar_batch")
+LOG_SEPARATOR = "============================================================"
+LOG_SUBSEPARATOR = "------------------------------------------------------------"
 
 
 def parse_args() -> argparse.Namespace:
@@ -263,9 +265,9 @@ def main() -> None:
     args = parse_args()
     batch_start_time = time.perf_counter()
 
-    logger.info("=" * 60)
+    logger.info(LOG_SEPARATOR)
     logger.info("DASHCAM RISK PREDICTION - PHASE 1 BATCH TRACKING")
-    logger.info("=" * 60)
+    logger.info(LOG_SEPARATOR)
     logger.info("Input directory:  %s", args.input_dir)
     logger.info("Output directory: %s", args.output_dir)
     logger.info("Config file:      %s", args.config)
@@ -331,7 +333,7 @@ def main() -> None:
         output_csv = phase1_dir / f"{video_name}_tracking.csv"
         tmp_csv = phase1_dir / f"{video_name}_tracking.tmp.csv"
 
-        logger.info("------------------------------------------------------------")
+        logger.info(LOG_SUBSEPARATOR)
         logger.info("[%d/%d] Starting processing for: %s", idx, total_videos, video_path.name)
 
         if output_csv.exists() and not args.overwrite:
@@ -384,9 +386,9 @@ def main() -> None:
 
     # 5. Final Summary Logging
     total_batch_time = time.perf_counter() - batch_start_time
-    logger.info("=" * 60)
+    logger.info(LOG_SEPARATOR)
     logger.info("BATCH PROCESSING COMPLETE - FINAL SUMMARY")
-    logger.info("=" * 60)
+    logger.info(LOG_SEPARATOR)
     logger.info("Total videos discovered: %d", total_videos)
     logger.info("Successfully processed:  %d", len(successful_videos))
     logger.info("Skipped (already done):  %d", len(skipped_videos))
@@ -406,7 +408,7 @@ def main() -> None:
             logger.warning("  - %s: %s", fname, err)
 
     logger.info("Phase 1 tracking directory: %s", phase1_dir)
-    logger.info("=" * 60)
+    logger.info(LOG_SEPARATOR)
 
     if failed_videos and len(successful_videos) == 0:
         sys.exit(1)

@@ -1,0 +1,9 @@
+model,split,roc_auc,pr_auc,optimal_threshold,f1,precision,recall,tp,fp,tn,fn
+heuristic_baseline,CV_OOF,0.6147,0.5905,0.0892,0.6937,0.551,0.936,351,286,89,24
+logistic_regression,CV_OOF,0.715,0.7043,0.3466,0.7018,0.5884,0.8693,326,228,147,49
+random_forest,CV_OOF,0.7577,0.7649,0.3169,0.7133,0.5752,0.9387,352,260,115,23
+hist_gradient_boosting,CV_OOF,0.7465,0.7451,0.2773,0.7018,0.5959,0.8533,320,217,158,55
+heuristic_baseline,Heldout,0.5583,0.9369,0.0892,0.9249,0.9299,0.92,345,26,4,30
+logistic_regression,Heldout,0.6138,0.9459,0.3466,0.8901,0.9433,0.8427,316,19,11,59
+random_forest,Heldout,0.7276,0.9691,0.3169,0.9402,0.9365,0.944,354,24,6,21
+hist_gradient_boosting,Heldout,0.7012,0.9638,0.2773,0.9116,0.9456,0.88,330,19,11,45

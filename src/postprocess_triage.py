@@ -620,16 +620,16 @@ def render_single_overlay_video(
 
         frame_min_ttc = min(valid_ttcs) if valid_ttcs else np.nan
 
-        # Active Risk Status for HUD banner
-        if (not np.isnan(frame_min_ttc) and frame_min_ttc < 1.5) or rf_prob >= 0.65:
+        # Active Risk Status driven dynamically by current frame's minimum TTC
+        if not np.isnan(frame_min_ttc) and frame_min_ttc < 1.5:
             active_status = "HIGH RISK"
-            status_color = (0, 0, 255)  # Red BGR
-        elif (not np.isnan(frame_min_ttc) and frame_min_ttc < 3.0) or rf_prob >= opt_threshold:
+            status_color = (0, 0, 255)      # Red BGR
+        elif not np.isnan(frame_min_ttc) and frame_min_ttc < 3.0:
             active_status = "MEDIUM RISK"
             status_color = (0, 255, 255)  # Yellow BGR
         else:
             active_status = "LOW RISK"
-            status_color = (0, 255, 0)  # Green BGR
+            status_color = (0, 255, 0)      # Green BGR
 
         # 1. Draw Bounding Boxes with TTC Color Coding
         if frame_sig is not None and not frame_sig.empty:
@@ -678,7 +678,7 @@ def render_single_overlay_video(
         # 2. Draw Top-Left HUD Banner
         hud_x = 24
         hud_y = 24
-        hud_w = max(340, int(round(width * 0.30)))
+        hud_w = max(420, int(round(width * 0.35)))
         hud_h = max(115, int(round(height * 0.16)))
 
         # Semi-transparent dark overlay
@@ -701,9 +701,9 @@ def render_single_overlay_video(
             (hud_x + 12, hud_y + line_step - 4),
             cv2.FONT_HERSHEY_SIMPLEX, hud_scale * 0.88, (210, 210, 210), hud_th, cv2.LINE_AA
         )
-        # Line 2: ML Probability
+        # Line 2: Clip-Level ML Prediction
         cv2.putText(
-            frame, f"ML Collision Prob : {rf_prob:.1%}",
+            frame, f"Clip ML Risk     : {risk_tier.upper()} ({rf_prob:.1%})",
             (hud_x + 12, hud_y + 2 * line_step - 2),
             cv2.FONT_HERSHEY_SIMPLEX, hud_scale, (255, 255, 255), hud_th, cv2.LINE_AA
         )
